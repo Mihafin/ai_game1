@@ -8,6 +8,14 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
   },
+  mode: 'development',
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    compress: true,
+    port: 9000,
+  },
   module: {
     rules: [
       {
@@ -17,6 +25,10 @@ module.exports = {
            filename: 'assets/[name][ext][query]'
         }
       },
+      {
+        test: /\.json$/,
+        type: 'json',
+      }
     ],
   },
   plugins: [
@@ -26,14 +38,8 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: "assets", to: "assets" },
+        { from: "src/levels", to: "levels" }
       ],
     }),
   ],
-  devServer: {
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
-    compress: true,
-    port: 9000,
-  },
 }; 

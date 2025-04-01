@@ -5,6 +5,15 @@ export default class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
   }
 
+  init(data) {
+    if (!data || !data.levelData) {
+      console.error('No level data provided!');
+      this.scene.start('MenuScene');
+      return;
+    }
+    this.levelData = data.levelData;
+  }
+
   preload() {
     console.log('Preload started');
     this.load.image('ground', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=');
@@ -18,7 +27,14 @@ export default class GameScene extends Phaser.Scene {
   create() {
     console.log('Create started');
 
-    // Создаем теплый зеленый фон
+    // Проверяем наличие данных уровня
+    if (!this.levelData) {
+      console.error('Level data is missing!');
+      this.scene.start('MenuScene');
+      return;
+    }
+
+    // Создаем фон
     const graphics = this.add.graphics();
     graphics.fillStyle(0x1976d2);
     graphics.fillRect(0, 0, 800, 600);
@@ -32,12 +48,26 @@ export default class GameScene extends Phaser.Scene {
     }
 
     this.platforms = this.physics.add.staticGroup();
-    this.platforms.create(400, 568, 'ground').setScale(800, 40).refreshBody().setTint(0x00ff00);
-    this.platforms.create(600, 400, 'ground').setScale(200, 20).refreshBody().setTint(0x00ff00);
-    this.platforms.create(80, 350, 'ground').setScale(200, 20).refreshBody().setTint(0x00ff00);
-    this.platforms.create(750, 220, 'ground').setScale(200, 20).refreshBody().setTint(0x00ff00);
+    
+    // Создаем платформы из JSON
+    this.levelData.platforms.forEach(platform => {
+      const platformObj = this.add.rectangle(
+        platform.x,
+        platform.y,
+        platform.width,
+        platform.height,
+        parseInt(platform.color)
+      );
+      this.physics.add.existing(platformObj, true);
+      this.platforms.add(platformObj);
+    });
 
-    this.player = this.physics.add.sprite(100, 450, 'player_sheet'); 
+    // Создаем игрока из JSON
+    this.player = this.physics.add.sprite(
+      this.levelData.player.x,
+      this.levelData.player.y,
+      'player_sheet'
+    );
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
     this.player.setScale(2);
@@ -62,12 +92,19 @@ export default class GameScene extends Phaser.Scene {
     });
 
     this.coins = this.add.group();
-    for (let i = 5; i < 7; i++) {
-      const coin = this.add.circle(12 + i * 70, 0, 8, 0xffff00);
-      this.physics.add.existing(coin);
-      coin.body.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-      this.coins.add(coin);
-    }
+    
+    // Создаем монеты из JSON
+    this.levelData.coins.forEach(coin => {
+      const coinObj = this.add.circle(
+        coin.x,
+        coin.y,
+        coin.radius,
+        parseInt(coin.color)
+      );
+      this.physics.add.existing(coinObj);
+      coinObj.body.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+      this.coins.add(coinObj);
+    });
 
     this.score = 0;
     this.scoreText = this.add.text(16, 16, 'Score: 0', { 
@@ -83,10 +120,12 @@ export default class GameScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.player, this.coins, this.collectCoin, null, this);
 
-    this.cameras.main.fadeIn(1000);
     this.cursors = this.input.keyboard.createCursorKeys();
     
     console.log('Create completed');
+
+    // Анимация появления сцены
+    this.cameras.main.fadeIn(1000);
   }
 
   update() {

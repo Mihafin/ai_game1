@@ -1,0 +1,68 @@
+{
+  "platforms": [
+    {
+      "x": 400,
+      "y": 568,
+      "width": 800,
+      "height": 40,
+      "color": "0x00ff00"
+    },
+    {
+      "x": 600,
+      "y": 400,
+      "width": 200,
+      "height": 20,
+      "color": "0x00ff00"
+    },
+    {
+      "x": 80,
+      "y": 350,
+      "width": 200,
+      "height": 20,
+      "color": "0x00ff00"
+    },
+    {
+      "x": 750,
+      "y": 220,
+      "width": 200,
+      "height": 20,
+      "color": "0x00ff00"
+    }
+  ],
+  "coins": [
+    {
+      "x": 12,
+      "y": 0,
+      "radius": 8,
+      "color": "0xffff00"
+    },
+    {
+      "x": 82,
+      "y": 0,
+      "radius": 8,
+      "color": "0xffff00"
+    },
+    {
+      "x": 152,
+      "y": 0,
+      "radius": 8,
+      "color": "0xffff00"
+    },
+    {
+      "x": 222,
+      "y": 0,
+      "radius": 8,
+      "color": "0xffff00"
+    },
+    {
+      "x": 292,
+      "y": 0,
+      "radius": 8,
+      "color": "0xffff00"
+    }
+  ],
+  "player": {
+    "x": 100,
+    "y": 450
+  }
+} 
