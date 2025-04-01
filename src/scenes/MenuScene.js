@@ -5,22 +5,11 @@ export default class MenuScene extends Phaser.Scene {
     super({ key: 'MenuScene' });
   }
 
-  preload() {
-    // Загружаем данные уровня
-    this.load.json('level1', 'levels/level1.json');
-  }
-
   create() {
     console.log('MenuScene create started');
 
     // Инициализируем управление
     this.cursors = this.input.keyboard.createCursorKeys();
-
-    // Проверяем, загружены ли данные уровня
-    if (!this.cache.json.exists('level1')) {
-      console.error('Level data not loaded!');
-      return;
-    }
 
     // Создаем градиентный фон
     const graphics = this.add.graphics();
@@ -104,11 +93,6 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   startGame() {
-    const levelData = this.cache.json.get('level1');
-    if (!levelData) {
-      console.error('Level data not found!');
-      return;
-    }
-    this.scene.start('GameScene', { levelData });
+    this.scene.start('GameScene', { levelPath: 'levels/level1.json' });
   }
 } 

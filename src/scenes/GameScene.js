@@ -6,12 +6,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   init(data) {
-    if (!data || !data.levelData) {
-      console.error('No level data provided!');
+    if (!data || !data.levelPath) {
+      console.error('No level path provided!');
       this.scene.start('MenuScene');
       return;
     }
-    this.levelData = data.levelData;
+    this.levelPath = data.levelPath;
   }
 
   preload() {
@@ -21,6 +21,7 @@ export default class GameScene extends Phaser.Scene {
       frameWidth: 16, 
       frameHeight: 16
     });
+    this.load.json('levelData', this.levelPath);
     console.log('Preload completed');
   }
 
@@ -28,11 +29,13 @@ export default class GameScene extends Phaser.Scene {
     console.log('Create started');
 
     // Проверяем наличие данных уровня
-    if (!this.levelData) {
+    if (!this.cache.json.exists('levelData')) {
       console.error('Level data is missing!');
       this.scene.start('MenuScene');
       return;
     }
+
+    const levelData = this.cache.json.get('levelData');
 
     // Создаем фон
     const graphics = this.add.graphics();
@@ -50,7 +53,7 @@ export default class GameScene extends Phaser.Scene {
     this.platforms = this.physics.add.staticGroup();
     
     // Создаем платформы из JSON
-    this.levelData.platforms.forEach(platform => {
+    levelData.platforms.forEach(platform => {
       const platformObj = this.add.rectangle(
         platform.x,
         platform.y,
@@ -64,8 +67,8 @@ export default class GameScene extends Phaser.Scene {
 
     // Создаем игрока из JSON
     this.player = this.physics.add.sprite(
-      this.levelData.player.x,
-      this.levelData.player.y,
+      levelData.player.x,
+      levelData.player.y,
       'player_sheet'
     );
     this.player.setBounce(0.2);
@@ -94,7 +97,7 @@ export default class GameScene extends Phaser.Scene {
     this.coins = this.add.group();
     
     // Создаем монеты из JSON
-    this.levelData.coins.forEach(coin => {
+    levelData.coins.forEach(coin => {
       const coinObj = this.add.circle(
         coin.x,
         coin.y,
