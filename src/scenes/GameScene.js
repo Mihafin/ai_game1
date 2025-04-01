@@ -17,6 +17,13 @@ export default class GameScene extends Phaser.Scene {
   preload() {
     console.log('Preload started');
     this.load.image('ground', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=');
+    // Создаем текстуру для частиц
+    const graphics = this.add.graphics();
+    graphics.fillStyle(0xffffff);
+    graphics.fillCircle(4, 4, 4);
+    graphics.generateTexture('particle', 8, 8);
+    graphics.destroy();
+    
     this.load.spritesheet('player_sheet', 'assets/player_sheet.png', {
       frameWidth: 16, 
       frameHeight: 16
@@ -201,11 +208,36 @@ export default class GameScene extends Phaser.Scene {
     oscillator.stop(this.audioContext.currentTime + 0.1);
   }
 
+  createCoinParticles(x, y) {
+    console.log('Creating particles at:', x, y);
+    const particles = this.add.particles(0, 0, 'particle', {
+      x: x,
+      y: y,
+      speed: { min: 100, max: 200 },
+      angle: { min: 0, max: 360 },
+      scale: { start: 0.4, end: 0 },
+      alpha: { start: 1, end: 0 },
+      lifespan: 500,
+      quantity: 8,
+      blendMode: 'ADD',
+      tint: 0xffff00,
+      active: true
+    });
+
+    // Удаляем эмиттер после завершения анимации
+    this.time.delayedCall(500, () => {
+      particles.destroy();
+    });
+  }
+
   collectCoin(player, coin) {
+    const coinX = coin.x;
+    const coinY = coin.y;
     coin.destroy();
     this.score += 10;
     this.scoreText.setText('Score: ' + this.score);
     this.playCoinSound();
+    this.createCoinParticles(coinX, coinY);
     console.log('Coin collected! Score:', this.score);
   }
 } 

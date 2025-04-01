@@ -14,7 +14,16 @@ const config = {
       debug: false
     }
   },
-  scene: [MenuScene, GameScene]
+  scene: [MenuScene, GameScene],
+  plugins: {
+    scene: [
+      {
+        key: 'Particles',
+        plugin: Phaser.GameObjects.Particles.ParticleEmitterManager,
+        mapping: 'particles'
+      }
+    ]
+  }
 };
 
 const game = new Phaser.Game(config); 
